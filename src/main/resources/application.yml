@@ -1,17 +1,19 @@
+
 spring:
     application:
         name: EDMIDC-Bitcoin-Collection-Source
     kafka:
         consumer:
-            bootstrap-servers: localhost:9092
-            group-id: group_id
             auto-offset-reset: earliest
+            bootstrap-servers: localhost:29092
+            group-id: group_id
             key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-            value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+            value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
         producer:
-            bootstrap-servers: localhost:9092
+            acks: -1
+            bootstrap-servers: localhost:29092
             key-serializer: org.apache.kafka.common.serialization.StringSerializer
-            value-serializer: org.apache.kafka.common.serialization.StringSerializer
+            value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
 
 server:
     port: 8081

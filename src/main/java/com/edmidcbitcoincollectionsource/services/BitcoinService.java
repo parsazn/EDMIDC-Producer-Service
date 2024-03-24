@@ -8,11 +8,12 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 
+
 @Service
 public class BitcoinService {
     private static final Logger logger = LoggerFactory.getLogger(Bitcoin.class);
-    private static final String TOPIC = "edmidc-bitcoin-cdc";
 
+    public static final String TOPIC = "edmidc-bitcoin-cdc";
     @Autowired
     private KafkaTemplate<String, String> kafkaTemplate;
 
