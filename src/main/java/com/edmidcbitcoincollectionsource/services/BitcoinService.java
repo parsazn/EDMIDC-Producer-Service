@@ -15,10 +15,10 @@ public class BitcoinService {
 
     public static final String TOPIC = "edmidc-bitcoin-cdc";
     @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private KafkaTemplate<String, Bitcoin> kafkaTemplate;
 
-    public void sendMessage(String message) {
-        logger.info(String.format("#### -> Producing message -> %s", message));
-        this.kafkaTemplate.send(TOPIC, message);
+    public void sendMessage(Bitcoin bitcoin) {
+        logger.info(String.format("#### -> Producing message -> %s", bitcoin));
+        this.kafkaTemplate.send(TOPIC, bitcoin);
     }
 }

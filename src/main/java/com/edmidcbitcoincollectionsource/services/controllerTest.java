@@ -1,22 +1,22 @@
 package com.edmidcbitcoincollectionsource.services;
 
+import com.edmidcbitcoincollectionsource.models.Bitcoin;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.edmidcbitcoincollectionsource.services.BitcoinService.TOPIC;
-
 
 @RestController
+@AllArgsConstructor
 public class controllerTest {
 
-    @Autowired
-    private KafkaTemplate<String, String> kafkaTemplate;
+    private BitcoinService service;
 
     @GetMapping("/")
     public String index() {
-        kafkaTemplate.send(TOPIC, "msg");
+        service.sendMessage(Bitcoin.builder().name("kos").build());
         return "Greetings from Spring Boot!";
     }
 }
