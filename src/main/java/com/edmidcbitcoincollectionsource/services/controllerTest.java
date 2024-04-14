@@ -16,7 +16,7 @@ public class controllerTest {
 
     @GetMapping("/")
     public String index() {
-        service.sendMessage(Bitcoin.builder().name("kos").build());
-        return "Greetings from Spring Boot!";
+        service.sendMessage(Bitcoin.builder().name("test").build());
+        return "Message sent";
     }
 }
