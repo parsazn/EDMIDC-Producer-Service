@@ -1,5 +1,9 @@
 version: '3'
 
+volumes:
+  db:
+    driver: local
+
 services:
 
   zookeeper:
@@ -9,7 +13,10 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - 22181:2181
-  
+    networks:
+      - my_network
+    container_name: zookeper
+
   kafka:
     image: confluentinc/cp-kafka:latest
     depends_on:
@@ -23,6 +30,9 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - my_network
+    container_name: kafka
 
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
@@ -34,20 +44,46 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    networks:
+      - my_network
+    container_name: kafka-ui
 
   prometheus:
     image: prom/prometheus:v2.44.0
-    container_name: prometheus
     ports:
       - 9090:9090
     volumes:
-      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - my_network
+    container_name: prometheus
 
   grafana:
     image: grafana/grafana:9.5.2
-    container_name: grafana
     ports:
       - 3000:3000
     restart: unless-stopped
     volumes:
-      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    networks:
+      - my_network
+    container_name: grafana
+
+  db:
+    image: postgres:14.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=edmidcUser
+      - POSTGRES_PASSWORD=edmidc
+      - POSTGRES_DB=heartbeatDB
+    ports:
+      - '5432:5432'
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - my_network
+    container_name: coreDB
+
+networks:
+  my_network:
+    driver: bridge
