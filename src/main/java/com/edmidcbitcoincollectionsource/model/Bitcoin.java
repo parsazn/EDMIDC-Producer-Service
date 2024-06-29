@@ -1,4 +1,4 @@
-package com.edmidcbitcoincollectionsource.models;
+package com.edmidcbitcoincollectionsource.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

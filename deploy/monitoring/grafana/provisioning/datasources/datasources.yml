@@ -20,3 +20,98 @@ datasources:
       connMaxLifetime: 14400 # Grafana v5.4+
       postgresVersion: 903 # 903=9.3, 904=9.4, 905=9.5, 906=9.6, 1000=10
       timescaledb: false
+groups:
+  - orgId: 1
+    name: postgres
+    folder: postgres
+    interval: 1m
+    rules:
+      - uid: db874300-9cc3-4924-9a20-44660e9be73f
+        title: No heartbeat
+        condition: B
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: P44368ADAD746BC27
+            model:
+              datasource:
+                type: postgres
+                uid: P44368ADAD746BC27
+              editorMode: code
+              format: table
+              hide: false
+              intervalMs: 1000
+              maxDataPoints: 43200
+              rawQuery: true
+              rawSql: |-
+                SELECT
+                  last_pulse AS time,
+                  CASE
+                    WHEN (
+                      EXTRACT(
+                        epoch
+                        FROM
+                          (
+                            SELECT
+                              now() AT TIME ZONE 'Europe/Paris'
+                          )
+                      ) - EXTRACT(
+                        epoch
+                        FROM
+                          last_pulse
+                      )
+                    ) > 900 THEN 1
+                    ELSE 0
+                  END AS alert_trigger
+                FROM
+                  heartbeat;
+              refId: A
+              sql:
+                columns:
+                  - parameters: []
+                    type: function
+                groupBy:
+                  - property:
+                      type: string
+                    type: groupBy
+                limit: 50
+          - refId: B
+            datasourceUid: __expr__
+            model:
+              conditions:
+                - evaluator:
+                    params:
+                      - 0
+                      - 0
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params: []
+                  reducer:
+                    params: []
+                    type: avg
+                  type: query
+              datasource:
+                name: Expression
+                type: __expr__
+                uid: __expr__
+              expression: A
+              intervalMs: 1000
+              maxDataPoints: 43200
+              reducer: last
+              refId: B
+              settings:
+                mode: ""
+              type: reduce
+        noDataState: NoData
+        execErrState: Alerting
+        for: 5m
+        annotations:
+          description: Service test its not working properly
+          summary: Service test its not working properly
+        labels:
+          Error: Error
+        isPaused: false
