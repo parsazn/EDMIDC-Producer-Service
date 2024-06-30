@@ -3,6 +3,8 @@ version: '3'
 volumes:
   db:
     driver: local
+  influxdb-data:
+  postgres-data:
 
 services:
 
@@ -69,6 +71,26 @@ services:
       - my_network
     container_name: grafana
 
+  influxdb:
+    image: influxdb:2
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+      - ./config:/etc/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=my-user
+      - DOCKER_INFLUXDB_INIT_PASSWORD=my-password
+      - DOCKER_INFLUXDB_INIT_ORG=my-org
+      - DOCKER_INFLUXDB_INIT_BUCKET=my-bucket
+      - DOCKER_INFLUXDB_INIT_RETENTION=0
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
+    restart: unless-stopped
+    networks:
+      - my_network
+
   db:
     image: postgres:14.1-alpine
     restart: always
@@ -87,14 +109,3 @@ services:
 networks:
   my_network:
     driver: bridge
-
-
-
-#  docker run -p 8086:8086 \
-#  -e INFLUXDB_DB=defaultdb \
-#  -e INFLUXDB_ADMIN_USER=admin \
-#  -e INFLUXDB_ADMIN_PASSWORD=adminpass \
-#  -e INFLUXDB_USER=user \
-#  -e INFLUXDB_USER_PASSWORD=userpass \
-#  -v influxdb:/var/lib/influxdb \
-#  influxdb:latest

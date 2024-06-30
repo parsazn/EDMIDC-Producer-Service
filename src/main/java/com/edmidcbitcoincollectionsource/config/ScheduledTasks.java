@@ -13,6 +13,6 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "0 * * * * *") // Cron expression for running every minute
     public void execute() {
-        service.sendHearbeatSignal();
+        service.sendHeartbeatSignal();
     }
 }
