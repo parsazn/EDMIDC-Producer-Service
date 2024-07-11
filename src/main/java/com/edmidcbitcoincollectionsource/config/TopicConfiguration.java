@@ -16,14 +16,14 @@ public class TopicConfiguration {
     {
         Map<String, Object> configs = new HashMap<>();
         configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG,
-                "localhost:29092");
+                "${spring.kafka.producer.bootstrap-servers}");
         return new KafkaAdmin(configs);
     }
 
     @Bean
     public NewTopic topic1()
     {
-        return TopicBuilder.name("edmidc-bitcoin-cdc")
+        return TopicBuilder.name("${spring.kafka.topic}")
                 .partitions(1)
                 .replicas(2)
                 .build();
