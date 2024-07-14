@@ -5,13 +5,13 @@ spring:
     kafka:
         consumer:
             auto-offset-reset: earliest
-            bootstrap-servers: localhost:${KAFKA_PORT}
-            group-id: group_id
+            bootstrap-servers: ${KAFKA_BOOTSTRAP_URL:localhost:29092}
+            group-id: ${GROUP_ID:group_id}
             key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
             value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
         producer:
             acks: -1
-            bootstrap-servers: localhost:${KAFKA_PORT}
+            bootstrap-servers: ${KAFKA_BOOTSTRAP_URL:localhost:29092}
             key-serializer: org.apache.kafka.common.serialization.StringSerializer
             value-serializer: org.apache.kafka.common.serialization.StringSerializer
         topic: ${TOPIC_NAME:edmidc-bitcoin-cdc}
@@ -23,7 +23,7 @@ spring:
         frequency: ${RESOURCE_FREQUENCY:0 * * * * *}
 
     datasource:
-        url: jdbc:postgresql://localhost:${POSTGRES_PORT:5432}/${POSTGRES_DB:heartbeatDB}
+        url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/heartbeatDB}
         username: ${POSTGRES_USER:edmidcUser}
         password: ${POSTGRES_PASSWORD:edmidc}
     jpa:
@@ -35,11 +35,6 @@ spring:
 management:
     server:
         port: ${SERVER_PORT:8081}
-    endpoints:
-        web:
-            exposure:
-                include: [ "prometheus" ]
-#     TODO           check these might be differenyt for prometheus
 server:
     port: ${SERVER_PORT:8081}
     servlet:
