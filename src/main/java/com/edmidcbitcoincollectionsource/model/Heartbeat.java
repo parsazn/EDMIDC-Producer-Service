@@ -17,7 +17,8 @@ import java.sql.Timestamp;
 public class Heartbeat {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "heartbeat_seq")
+    @SequenceGenerator(name = "heartbeat_seq", sequenceName = "heartbeat_sequence", allocationSize = 1)
     private Long id;
 
     @Column(name = "service")

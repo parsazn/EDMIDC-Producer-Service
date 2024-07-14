@@ -1,7 +1,7 @@
 
 spring:
     application:
-        name: EDMIDC-Producer-Service
+        name: ${PRODUCER_APPLICATION_NAME:EDMIDC-Producer-Service}
     kafka:
         consumer:
             auto-offset-reset: earliest

@@ -18,7 +18,7 @@ public class ProducerService {
     private final String URL;
     private final String MEASUREMENT_NAME;
     private final String TAG;
-    private final String TOPIC; // Update with your actual Kafka topic
+    private final String TOPIC;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final RestTemplate restTemplate;
 

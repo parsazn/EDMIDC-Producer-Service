@@ -17,4 +17,6 @@ public class ProducerMetadataConfig {
     private String tag;
     @Value("${spring.resource.frequency}")
     private String cronFrequency;
+    @Value("spring.application.name")
+    private String applicationName;
 }
