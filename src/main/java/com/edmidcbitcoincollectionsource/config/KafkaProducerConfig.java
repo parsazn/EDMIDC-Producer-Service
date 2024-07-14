@@ -23,12 +23,15 @@ public class KafkaProducerConfig {
     @Value("${spring.kafka.errorTopic}")
     @Getter
     private String errorKafkaTopic;
+
+    @Value("${spring.kafka.producer.bootstrap-servers}")
+    private String bootstrapServers;
     @Bean
     public ProducerFactory<String, String> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(
                 ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                "${spring.kafka.producer.bootstrap-servers}");
+                bootstrapServers);
         configProps.put(
                 ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class);
