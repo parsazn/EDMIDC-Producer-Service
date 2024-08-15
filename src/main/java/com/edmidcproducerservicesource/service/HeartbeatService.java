@@ -1,8 +1,8 @@
-package com.edmidcbitcoincollectionsource.service;
+package com.edmidcproducerservicesource.service;
 
-import com.edmidcbitcoincollectionsource.config.ProducerMetadataConfig;
-import com.edmidcbitcoincollectionsource.model.Heartbeat;
-import com.edmidcbitcoincollectionsource.repository.HeartbeatRepository;
+import com.edmidcproducerservicesource.config.ProducerMetadataConfig;
+import com.edmidcproducerservicesource.model.Heartbeat;
+import com.edmidcproducerservicesource.repository.HeartbeatRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

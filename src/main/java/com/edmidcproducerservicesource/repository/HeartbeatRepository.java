@@ -1,6 +1,6 @@
-package com.edmidcbitcoincollectionsource.repository;
+package com.edmidcproducerservicesource.repository;
 
-import com.edmidcbitcoincollectionsource.model.Heartbeat;
+import com.edmidcproducerservicesource.model.Heartbeat;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

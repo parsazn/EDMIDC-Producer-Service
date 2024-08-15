@@ -1,14 +1,16 @@
-package com.edmidcbitcoincollectionsource.service;
+package com.edmidcproducerservicesource.service;
 
-import com.edmidcbitcoincollectionsource.config.KafkaProducerConfig;
-import com.edmidcbitcoincollectionsource.config.ProducerMetadataConfig;
-import com.edmidcbitcoincollectionsource.model.ErrorStatus;
+import com.edmidcproducerservicesource.config.KafkaProducerConfig;
+import com.edmidcproducerservicesource.config.ProducerMetadataConfig;
+import com.edmidcproducerservicesource.model.ErrorStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.*;
+
+import java.util.Date;
 
 
 @Service
@@ -22,7 +24,9 @@ public class ProducerService {
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final RestTemplate restTemplate;
 
-    public ProducerService(KafkaTemplate<String, String> kafkaTemplate, RestTemplate restTemplate, KafkaProducerConfig kafkaProducerConfig , ProducerMetadataConfig producerMetadataConfig) {
+    private final KafkaFailedMessagesService kafkaFailedMessagesService;
+
+    public ProducerService(KafkaTemplate<String, String> kafkaTemplate, RestTemplate restTemplate, KafkaProducerConfig kafkaProducerConfig, ProducerMetadataConfig producerMetadataConfig, KafkaFailedMessagesService kafkaFailedMessagesService) {
         this.kafkaTemplate = kafkaTemplate;
         this.restTemplate = restTemplate;
         this.ERROR_TOPIC = kafkaProducerConfig.getErrorKafkaTopic();
@@ -30,6 +34,7 @@ public class ProducerService {
         this.URL = producerMetadataConfig.getUrl();
         this.MEASUREMENT_NAME = producerMetadataConfig.getMeasurementName();
         this.TAG = producerMetadataConfig.getTag();
+        this.kafkaFailedMessagesService = kafkaFailedMessagesService;
     }
 
     public void handleFrequentGetRequest() {
@@ -45,18 +50,18 @@ public class ProducerService {
 
             // Manually construct the final JSON string
             String updatedJsonString = String.format(
-                    "{\"measurementName\":\"%s\",\"tag\":\"%s\",\"result\":%s}",
-                    MEASUREMENT_NAME, TAG, jsonString
+                    "{\"measurementName\":\"%s\",\"tag\":\"%s\",\"created\":\"%s\",\"result\":%s}",
+                    MEASUREMENT_NAME, TAG, new Date().getTime(), jsonString
             );
 
-            kafkaTemplate.send(TOPIC, updatedJsonString);
+            sendKafkaMessage(TOPIC, updatedJsonString);
         } catch (Exception e) {
             logger.error("Error handling frequent GET request", e);
         }
     }
 
 
-    private String performGetRequest(String url){
+    private String performGetRequest(String url) {
         try {
             return restTemplate.getForObject(url, String.class);
         } catch (HttpClientErrorException e) {
@@ -79,7 +84,7 @@ public class ProducerService {
         try {
             json = mapper.writeValueAsString(new ErrorStatus(status, message, TOPIC));
         } catch (Exception e) {
-            json = "{\"status\":" + status + ",\"message\":\"" + message.replaceAll("\"", "") + "\"" + ",\"topic\":\""+ TOPIC + "\"}";
+            json = "{\"status\":" + status + ",\"message\":\"" + message.replaceAll("\"", "") + "\"" + ",\"topic\":\"" + TOPIC + "\"}";
         }
 
         String updatedJsonString = String.format(
@@ -87,6 +92,14 @@ public class ProducerService {
                 "Error", "error", json
         );
 
-        this.kafkaTemplate.send(ERROR_TOPIC, updatedJsonString);
+        sendKafkaMessage(ERROR_TOPIC, updatedJsonString);
+    }
+
+    public void sendKafkaMessage(String topicName, String kafkaMessage) {
+        try {
+            this.kafkaTemplate.send(topicName, kafkaMessage);
+        } catch (Exception exception) {
+            kafkaFailedMessagesService.createFailedTask(kafkaMessage, exception.getMessage(), topicName);
+        }
     }
 }

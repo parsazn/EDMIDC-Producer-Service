@@ -1,4 +1,4 @@
-package com.edmidcbitcoincollectionsource.config;
+package com.edmidcproducerservicesource.config;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
