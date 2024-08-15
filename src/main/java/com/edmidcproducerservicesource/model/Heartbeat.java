@@ -1,4 +1,4 @@
-package com.edmidcbitcoincollectionsource.model;
+package com.edmidcproducerservicesource.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

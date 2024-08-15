@@ -1,6 +1,6 @@
-package com.edmidcbitcoincollectionsource.service;
+package com.edmidcproducerservicesource.service;
 
-import com.edmidcbitcoincollectionsource.config.ProducerMetadataConfig;
+import com.edmidcproducerservicesource.config.ProducerMetadataConfig;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -9,10 +9,13 @@ public class ScheduledTasks {
     private final HeartbeatService heartbeatService;
     private final ProducerService producerService;
     private final ProducerMetadataConfig producerMetadataConfig;
-    public ScheduledTasks(HeartbeatService heartbeatService, ProducerService producerService, ProducerMetadataConfig producerMetadataConfig) {
+    private final KafkaFailedMessagesService kafkaFailedMessagesService;
+
+    public ScheduledTasks(HeartbeatService heartbeatService, ProducerService producerService, ProducerMetadataConfig producerMetadataConfig, KafkaFailedMessagesService kafkaFailedMessagesService) {
         this.heartbeatService = heartbeatService;
         this.producerService = producerService;
         this.producerMetadataConfig = producerMetadataConfig;
+        this.kafkaFailedMessagesService = kafkaFailedMessagesService;
     }
 
     @Scheduled(cron = "0 * * * * *") // Cron expression for running every minute
@@ -23,5 +26,10 @@ public class ScheduledTasks {
     @Scheduled(cron = "#{@producerMetadataConfig.cronFrequency}") // Cron expression for running every minute
     public void executeGetRequest() {
         producerService.handleFrequentGetRequest();
+    }
+
+    @Scheduled(cron = "0 0 * * * *") // Cron expression for running every minute
+    public void resendFailedMessages() {
+        kafkaFailedMessagesService.resendFailedMessagesWithinABatch(30);
     }
 }

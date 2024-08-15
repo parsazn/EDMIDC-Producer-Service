@@ -1,4 +1,4 @@
-package com.edmidcbitcoincollectionsource.config;
+package com.edmidcproducerservicesource.config;
 
 import lombok.Getter;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-
 public class KafkaProducerConfig {
     @Value("${spring.kafka.topic}")
     @Getter
@@ -31,7 +30,7 @@ public class KafkaProducerConfig {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(
                 ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                bootstrapServers);
+                "localhost:29092");
         configProps.put(
                 ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
                 StringSerializer.class);
