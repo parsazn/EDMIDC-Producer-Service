@@ -28,7 +28,7 @@ public class ScheduledTasks {
         producerService.handleFrequentGetRequest();
     }
 
-    @Scheduled(cron = "0 0 * * * *") // Cron expression for running every minute
+    @Scheduled(cron = "0 0 * * * *") // Cron expression for running every hour
     public void resendFailedMessages() {
         kafkaFailedMessagesService.resendFailedMessagesWithinABatch(30);
     }

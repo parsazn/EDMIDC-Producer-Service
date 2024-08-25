@@ -22,7 +22,7 @@ public class TopicConfiguration {
     {
         Map<String, Object> configs = new HashMap<>();
         configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG,
-                "localhost:29092");
+                bootstrapServers);
         return new KafkaAdmin(configs);
     }
 

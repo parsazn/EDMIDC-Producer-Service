@@ -13,22 +13,23 @@ import java.util.Date;
 @Setter
 public class KafkaFailedMessage {
 
-    public static final String TABLE_NAME= "ARTICLES";
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "text")
+    @Column(columnDefinition = "text" , name = "message_content")
     private String messageContent;
 
-    @Column(columnDefinition = "text")
+    @Column(columnDefinition = "text", name = "error_message")
     private String errorMessage;
 
+    @Column(name = "created_date")
     private Date createdDate = new Date();
 
+    @Column(name = "updated_date")
     private Date updatedDate;
 
+    @Column(name = "topic_name")
     private String topicName;
 
     private long retries = 0;
